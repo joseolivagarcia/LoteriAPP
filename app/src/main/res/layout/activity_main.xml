@@ -52,10 +52,11 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btncomprobar"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="60dp"
+        android:layout_marginHorizontal="80dp"
         android:text="comprobar décimos"
-        android:textSize="18sp"
+        android:textSize="22sp"
         android:background="@color/principal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

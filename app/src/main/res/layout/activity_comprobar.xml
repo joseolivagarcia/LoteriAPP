@@ -6,4 +6,51 @@
     android:layout_height="match_parent"
     tools:context=".activities.ComprobarActivity">
 
+    <ImageView
+        android:id="@+id/logocomprobar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/bombo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvtitulocomprobar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="DÉCIMOS PREMIADOS"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/logocomprobar" />
+
+    <!--<androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvdecimos"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        tools:listitem="@layout/item_decimo_premiadd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvtitulocomprobar"
+        app:layout_constraintBottom_toTopOf="@id/btnvolver"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"/>-->
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnvolver"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:text="volver"
+        android:textSize="22sp"
+        android:background="@color/principal"
+        android:layout_marginHorizontal="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="20dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

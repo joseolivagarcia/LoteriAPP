@@ -3,6 +3,7 @@ package joseoliva.com.loteriapp.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +22,8 @@ class MainActivity : AppCompatActivity() {
     //creamos las var necesarias
     lateinit var viewModel: ViewModelDecimo
     lateinit var recyclerview: RecyclerView
+    lateinit var adapter: DecimosAdapter
+    var listaJugados = arrayListOf<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,11 +32,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         //inicializo el recycler con los decimos
-        recyclerview = binding.rvdecimos
-        recyclerview.layoutManager = LinearLayoutManager(this)
-        //inicializamos el adapter y le pasamos como parametros el contexto y las interface que necesita
-        val adapter = DecimosAdapter(onClickDelete = {decimo -> onItemDelete(decimo)})
-        recyclerview.adapter = adapter
+        initReciclerView()
 
         //inicializamos el viewmodel con un provider y le pasamos nuestra clase de ViewModel
         viewModel = ViewModelProvider(
@@ -43,44 +42,63 @@ class MainActivity : AppCompatActivity() {
 
         //Llamamos a la lista de decimos del viewModel para observar los cambios que haya en la lista
         //lo puedo "observar" porque es un LiveData y cada vez que la lista cambie algo, se actualiza
-        viewModel.listadecimos.observe(this,{list -> list?.let {
-            adapter.updateList(it)
-        }})
+        viewModel.listadecimos.observe(this) { list ->
+            list?.let {
+                adapter.updateList(it)
+                listaJugados.clear() //limpioi la lista de los numeros jugados
+                for (num in list){
+                    listaJugados.add(num.numero) //y los añado todos otra vez para que no se repitan
+                }
+            }
+        }
 
         //creo el AlertDialog para que al pulsar el boton de añadir pueda insertar un numero y la participacion
         binding.fab.setOnClickListener {
-            val inflater = layoutInflater //creo una var para guardar un layoutinflater
-            val dialoglayout = inflater.inflate(R.layout.dialog_insertar_decimo,null) //en otra var inflo el layout que tenemos para capturar los numeros
-            //referencio los campos donde inertamos los datos de numero y participacion
-            val numdecimo = dialoglayout.findViewById<TextInputEditText>(R.id.etnumero)
-            val participacion = dialoglayout.findViewById<TextInputEditText>(R.id.etparticipacion)
-            //creamos el AlertDialog
-            val alertdialog = AlertDialog.Builder(this)
-            alertdialog.setTitle("Insertar Décimo")
-            alertdialog.setView(dialoglayout) //le paso el layout para poder insertar datos
-            //añadimos los botones del dialog
-            alertdialog.setPositiveButton("Insertar"){
-                dialog,_ ->
-                dialog.dismiss()
-                //guardamos el decimo en la bbdd
-                val numero = numdecimo.text.toString().toInt()
-                val parti = participacion.text.toString().toDouble()
-                val newDecimo = DecimoJugado(numero,parti)
-                viewModel.insertardecimo(newDecimo)
-            }
-            alertdialog.setNegativeButton("Cancelar"){
-                dialog,_ ->
-                dialog.dismiss()
-            }
-
-            alertdialog.show()
+           alertDialogInsertarDecimo()
         }
 
         //funcionalidad para el boton de comprobar decimos
         binding.btncomprobar.setOnClickListener {
             val intent = Intent(this, ComprobarActivity::class.java)
+            intent.putExtra("listanumeros", listaJugados)
             startActivity(intent)
         }
+    }
+
+    private fun initReciclerView(){
+        recyclerview = binding.rvdecimos
+        recyclerview.layoutManager = LinearLayoutManager(this)
+        //inicializamos el adapter y le pasamos como parametros el contexto y las interface que necesita
+        adapter = DecimosAdapter(onClickDelete = {decimo -> onItemDelete(decimo)})
+        recyclerview.adapter = adapter
+    }
+
+    private fun alertDialogInsertarDecimo(){
+        val inflater = layoutInflater //creo una var para guardar un layoutinflater
+        val dialoglayout = inflater.inflate(R.layout.dialog_insertar_decimo,null) //en otra var inflo el layout que tenemos para capturar los numeros
+        //referencio los campos donde inertamos los datos de numero y participacion
+        val numdecimo = dialoglayout.findViewById<TextInputEditText>(R.id.etnumero)
+        val participacion = dialoglayout.findViewById<TextInputEditText>(R.id.etparticipacion)
+        //creamos el AlertDialog
+        val alertdialog = AlertDialog.Builder(this)
+        alertdialog.setTitle("Insertar Décimo")
+        alertdialog.setView(dialoglayout) //le paso el layout para poder insertar datos
+        //añadimos los botones del dialog
+        alertdialog.setPositiveButton("Insertar"){
+                dialog,_ ->
+            dialog.dismiss()
+            //guardamos el decimo en la bbdd
+            val numero = numdecimo.text.toString().toInt()
+            val parti = participacion.text.toString().toDouble()
+            val newDecimo = DecimoJugado(numero,parti)
+            viewModel.insertardecimo(newDecimo)
+        }
+        alertdialog.setNegativeButton("Cancelar"){
+                dialog,_ ->
+            dialog.dismiss()
+        }
+
+        alertdialog.show()
     }
 
     private fun onItemDelete(decimo: DecimoJugado) {
