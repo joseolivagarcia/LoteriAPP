@@ -1,5 +1,6 @@
 package joseoliva.com.loteriapp.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
@@ -74,10 +75,12 @@ class MainActivity : AppCompatActivity() {
 
             alertdialog.show()
         }
-    }
 
-    private fun initRecyclerView() {
-
+        //funcionalidad para el boton de comprobar decimos
+        binding.btncomprobar.setOnClickListener {
+            val intent = Intent(this, ComprobarActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun onItemDelete(decimo: DecimoJugado) {

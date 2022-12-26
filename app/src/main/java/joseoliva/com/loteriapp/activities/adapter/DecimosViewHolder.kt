@@ -19,7 +19,7 @@ class DecimosViewHolder(view: View): RecyclerView.ViewHolder(view) {
     fun render(decimoModel: DecimoJugado, onClickDelete:(DecimoJugado) -> Unit){
         //relleno las vistas con los datos que obtengo de cada item que recorro
         numero.text = decimoModel.numero.toString()
-        participacion.text = decimoModel.participacion.toString()
+        participacion.text = "Juego " + decimoModel.participacion.toString() + "€"
 
         //doy funcionalidad al boton de borrar
         btnborrar.setOnClickListener {
