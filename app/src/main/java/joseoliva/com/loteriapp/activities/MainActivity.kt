@@ -23,16 +23,12 @@ class MainActivity : AppCompatActivity() {
     lateinit var viewModel: ViewModelDecimo
     lateinit var recyclerview: RecyclerView
     lateinit var adapter: DecimosAdapter
-    var listaJugados = arrayListOf<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //inicializamos el binding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        //inicializo el recycler con los decimos
-        initReciclerView()
 
         //inicializamos el viewmodel con un provider y le pasamos nuestra clase de ViewModel
         viewModel = ViewModelProvider(
@@ -45,12 +41,11 @@ class MainActivity : AppCompatActivity() {
         viewModel.listadecimos.observe(this) { list ->
             list?.let {
                 adapter.updateList(it)
-                listaJugados.clear() //limpioi la lista de los numeros jugados
-                for (num in list){
-                    listaJugados.add(num.numero) //y los añado todos otra vez para que no se repitan
-                }
             }
         }
+
+        //inicializo el recycler con los decimos
+        initReciclerView()
 
         //creo el AlertDialog para que al pulsar el boton de añadir pueda insertar un numero y la participacion
         binding.fab.setOnClickListener {
@@ -60,7 +55,6 @@ class MainActivity : AppCompatActivity() {
         //funcionalidad para el boton de comprobar decimos
         binding.btncomprobar.setOnClickListener {
             val intent = Intent(this, ComprobarActivity::class.java)
-            intent.putExtra("listanumeros", listaJugados)
             startActivity(intent)
         }
     }

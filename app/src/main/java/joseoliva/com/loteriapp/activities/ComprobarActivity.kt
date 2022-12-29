@@ -22,7 +22,8 @@ class ComprobarActivity : AppCompatActivity() {
     lateinit var binding: ActivityComprobarBinding
     lateinit var adapter: PremiosAdapter
     private var linearLayoutManager = LinearLayoutManager(this)
-    var listaJugados = arrayListOf<Int>()
+    lateinit var viewModel: ViewModelDecimo
+
     lateinit var listapremiados: List<DecimoPremiado>
     var listaTusPremios = mutableListOf<DecimoPremiado>()
 
@@ -30,6 +31,26 @@ class ComprobarActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityComprobarBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //inicializamos el viewmodel con un provider y le pasamos nuestra clase de ViewModel
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        ).get(ViewModelDecimo::class.java)
+
+        //aqui obtengo la lista con los decimos que juego, los que estan en la main activity.
+        viewModel.listadecimos.observe(this) { list ->
+            list?.let {
+                    for (d in list){
+                        for (p in listapremiados){
+                            if (d.numero == p.numero){
+                                listaTusPremios.add(p)
+                            }
+                        }
+                    }
+                initRecyclerView()
+            }
+        }
 
         //lista de pruebas provisional
         listapremiados = listOf(
@@ -39,18 +60,6 @@ class ComprobarActivity : AppCompatActivity() {
             DecimoPremiado(32456,50000),
         )
 
-        //recibo la lista de los numeros que juego y que comparare con los de firebase
-        listaJugados = intent.getSerializableExtra("listanumeros") as ArrayList<Int>
-
-        for (num in listapremiados){
-            for (minum in listaJugados){
-                if(num.numero == minum){
-                    listaTusPremios.add(num)
-                }
-            }
-
-            initRecyclerView()
-        }
 
         //initRecyclerView() //lo llamamos cuando comprobamos si tenemos algun numero premiado
 
@@ -59,7 +68,6 @@ class ComprobarActivity : AppCompatActivity() {
             startActivity(intent)
             listaTusPremios.clear()
         }
-
 
     }
 
