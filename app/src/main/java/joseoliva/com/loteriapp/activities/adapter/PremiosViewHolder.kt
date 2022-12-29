@@ -13,7 +13,7 @@ class PremiosViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
     fun render(decimopremiado: DecimoPremiado) {
         numero.text = decimopremiado.numero.toString()
-        premio.text = "Has ganado " + decimopremiado.premio.toString() + "€ al décimo (20€)"
+        premio.text = "Has ganado " + decimopremiado.premio.toString() + "€"
     }
 
 }

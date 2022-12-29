@@ -44,6 +44,11 @@ class ComprobarActivity : AppCompatActivity() {
                     for (d in list){
                         for (p in listapremiados){
                             if (d.numero == p.numero){
+                                p.premio = (p.premio * d.participacion / 20).toFloat()
+                                listaTusPremios.add(p)
+                            }else if (d.numero == p.numero +1 || d.numero == p.numero -1 && p.premio == 400000f){
+                                p.premio = (2000 * d.participacion / 20).toFloat()
+                                p.numero = d.numero
                                 listaTusPremios.add(p)
                             }
                         }
@@ -52,12 +57,12 @@ class ComprobarActivity : AppCompatActivity() {
             }
         }
 
-        //lista de pruebas provisional
+        //lista de pruebas provisional esta lista la tendre que obtener de firebase
         listapremiados = listOf(
-            DecimoPremiado(12345,400000),
-            DecimoPremiado(54678,125000),
-            DecimoPremiado(56789,50000),
-            DecimoPremiado(32456,50000),
+            DecimoPremiado(23223,400000f),
+            DecimoPremiado(54678,125000f),
+            DecimoPremiado(56789,50000f),
+            DecimoPremiado(32456,50000f),
         )
 
 
