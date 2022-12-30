@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "873844239573",
+    "project_id": "loteriapp-7a79a",
+    "storage_bucket": "loteriapp-7a79a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:873844239573:android:563ae4749ddf2f176b465c",
+        "android_client_info": {
+          "package_name": "joseoliva.com.loteriapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "873844239573-c7oka0aqd37qcqi14qg0dp8sh1on5eet.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZNm0xbhV4qtMzd9T6w6w38Ap0ohJxfBs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "873844239573-c7oka0aqd37qcqi14qg0dp8sh1on5eet.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
