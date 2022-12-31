@@ -19,7 +19,7 @@
         android:id="@+id/tvtitulocomprobar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="DÉCIMOS PREMIADOS"
+        tools:text="DÉCIMOS PREMIADOS"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="@color/black"

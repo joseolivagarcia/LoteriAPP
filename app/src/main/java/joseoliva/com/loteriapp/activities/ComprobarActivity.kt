@@ -25,7 +25,7 @@ class ComprobarActivity : AppCompatActivity() {
     private var linearLayoutManager = LinearLayoutManager(this)
     lateinit var viewModel: ViewModelDecimo
 
-    lateinit var listapremiados: List<DecimoPremiado>
+    var listapremiados = mutableListOf<DecimoPremiado>()
     var listaTusPremios = mutableListOf<DecimoPremiado>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,44 +35,8 @@ class ComprobarActivity : AppCompatActivity() {
 
         configRealtimeFirestore() //llamo al metodo que inicia Firestore
 
-        //inicializamos el viewmodel con un provider y le pasamos nuestra clase de ViewModel
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(ViewModelDecimo::class.java)
-
-        //aqui obtengo la lista con los decimos que juego, los que estan en la main activity.
-        viewModel.listadecimos.observe(this) { list ->
-            list?.let {
-                    for (d in list){
-                        for (p in listapremiados){
-                            if (d.numero == p.numero){
-                                p.premio = (p.premio * d.participacion / 20).toFloat() //esto es lo que te toca segun lo que juegues
-                                listaTusPremios.add(p)
-                            }else if (d.numero == p.numero +1 || d.numero == p.numero -1 && p.premio == 400000f){
-                                p.premio = (2000 * d.participacion / 20).toFloat()
-                                p.numero = d.numero //para que aparezca tu numero jugado y no el anterior o posterior (aunque es realmente el que te toca)
-                                listaTusPremios.add(p)
-                            }
-                        }
-                    }
-                initRecyclerView()
-            }
-        }
-
-        //lista de pruebas provisional esta lista la tendre que obtener de firebase
-        listapremiados = listOf(
-            DecimoPremiado(23223,400000f),
-            DecimoPremiado(54678,125000f),
-            DecimoPremiado(56789,50000f),
-            DecimoPremiado(32456,50000f),
-        )
-
-
-        //initRecyclerView() //lo llamamos cuando comprobamos si tenemos algun numero premiado
-
-        binding.btnvolver.setOnClickListener{
-            val intent = Intent(this,MainActivity::class.java)
+        binding.btnvolver.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             listaTusPremios.clear()
         }
@@ -87,14 +51,58 @@ class ComprobarActivity : AppCompatActivity() {
         * los objetos que tengo en la listadecimos.
          */
         db.collection("Premiados").get().addOnSuccessListener { snapshots ->
-            for (document in snapshots){
-                Log.d("firebase",document.get("numero").toString())
+            for (document in snapshots) {
+                val decpremiado = document.toObject(DecimoPremiado::class.java)
+                decpremiado.id = document.id
+                listapremiados.add(decpremiado)
+                Log.d("firebase", document.get("numero").toString())
+
+            }
+            Log.d("listapremiados", listapremiados.size.toString())
+            /*
+            * Una vez que tengo la lista que obtengo de firebase llamo al metodo que va a comprobar los numeros premiados (los de firebase)
+            * con los numeros que tengo en la base de datos de room (lon numeros que juego)*/
+            comprobarPremios()
+        }
+    }
+
+    private fun comprobarPremios() {
+        //inicializamos el viewmodel con un provider y le pasamos nuestra clase de ViewModel
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        ).get(ViewModelDecimo::class.java)
+
+        //aqui obtengo la lista con los decimos que juego, los que estan en la main activity. y los comparo con los premiados (los de firebase)
+        viewModel.listadecimos.observe(this) { list ->
+            list?.let {
+                //aqui voy metiendo todas las combinaciones posibles de premio
+                for (jugado in list) {
+                    for (premiado in listapremiados) {
+                        if (jugado.numero == premiado.numero) {
+                            premiado.premio =
+                                (premiado.premio * jugado.participacion / 20).toFloat() //esto es lo que te toca segun lo que juegues
+                            listaTusPremios.add(premiado)
+                        } else if (jugado.numero == premiado.numero + 1 || jugado.numero == premiado.numero - 1 && premiado.premio == 400000f) {
+                            premiado.premio = (2000 * jugado.participacion / 20).toFloat()
+                            premiado.numero =
+                                jugado.numero //para que aparezca tu numero jugado y no el anterior o posterior (aunque es realmente el que te toca)
+                            listaTusPremios.add(premiado)
+                        }
+                    }
+                }
+                Log.d("listatuspremios", listaTusPremios.size.toString())
+                if(listaTusPremios.isEmpty()){
+                    binding.tvtitulocomprobar.text = "Ningún Décimo Premiado"
+                }else{
+                    binding.tvtitulocomprobar.text = "Décimos Premiados"
+                }
+                initRecyclerView()
             }
         }
     }
 
     private fun initRecyclerView() {
-
         adapter = PremiosAdapter(listaTusPremios.toList())
         binding.rvdecimos.layoutManager = linearLayoutManager
         binding.rvdecimos.adapter = adapter
